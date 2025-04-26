@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'xhs',
 ]
 
 MIDDLEWARE = [
@@ -72,14 +73,17 @@ WSGI_APPLICATION = 'spider.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+MYSQLHOST = "192.168.0.130"
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # 默认
+        'NAME': 'wevideo',  # 连接的数据库
+        'HOST': MYSQLHOST,  # mysql的ip地址
+        'PORT': 3306,  # mysql的端口
+        'USER': 'zhangtq',  # mysql的用户名
+        'PASSWORD': 'centos*Abc'  # mysql的密码
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -103,13 +107,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False # 否则日期显示不一致
+
 
 
 # Static files (CSS, JavaScript, Images)
