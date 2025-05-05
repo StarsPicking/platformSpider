@@ -34,7 +34,7 @@ def enveloper(serializer_class, many):
         serializer_class.__name__.replace("Serializer", ""),
         "List" if many else "",
     )
-
+    
     @extend_schema_serializer(many=False, component_name=component_name)
     class EnvelopeSerializer(serializers.Serializer):
         msg = serializers.CharField(default=MSG)# some arbitrary envelope field

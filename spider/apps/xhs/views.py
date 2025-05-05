@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import XhsTask
 from .serializers import XhsTaskSerializer
-from utils.custom_renderer import enveloper
+from drf_utils.custom_renderer import enveloper
 @extend_schema(tags=["任务管理"])
 class TaskView(APIView):
 

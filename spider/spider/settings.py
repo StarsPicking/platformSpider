@@ -12,10 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -135,9 +136,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = []
 
 REST_FRAMEWORK = {
+        'EXCEPTION_HANDLER': 'drf_utils.exceptions.common_exception_handler', # 自定义错误处理
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
         'DEFAULT_RENDERER_CLASSES': [
-            'utils.custom_renderer.CustomRenderer', # 自定义返回数据格式
+            'drf_utils.custom_renderer.CustomRenderer', # 自定义返回数据格式
             'rest_framework.renderers.BrowsableAPIRenderer', #浏览器的格式
         ]
     }
@@ -151,4 +153,79 @@ SPECTACULAR_SETTINGS = {
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
+}
+
+
+REDISHOST = "192.168.0.130:6379"
+REIDSPASSWD = "centos*Abc"
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "{redispasswd}@{redishost}/1".format(redispasswd=REIDSPASSWD, redishost=REDISHOST),  # 注意这里的 /1 表示使用 Redis 的第一个数据库
+        "LOCATION": "redis://:yourpassword@redis-host:6379/0", # 基础连接字符串
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "task": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "{redispasswd}@{redishost}/2".format(redispasswd=REIDSPASSWD, redishost=REDISHOST),  # 注意这里的 /1 表示使用 Redis 的第一个数据库
+        "LOCATION": "redis://:yourpassword@redis-host:6379/0", # 基础连接字符串
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    }
+}
+}
+
+# 自定义日志
+# settings/dev.py	配置文件
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            # 实际开发建议使用WARNING
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            # 实际开发建议使用ERROR
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            # 日志位置,日志文件名,日志保存目录必须手动创建
+            'filename': os.path.join(BASE_DIR, "logs", "spider.log"),
+            # 日志文件的最大值,这里我们设置300M
+            'maxBytes': 300 * 1024 * 1024,
+            # 日志文件的数量,设置最大日志数量为10
+            'backupCount': 100,
+            # 日志格式:详细格式
+            'formatter': 'verbose',
+            # 文件内容编码
+            'encoding': 'utf-8'
+        },
+    },
+    # 日志对象
+    'loggers': {
+        'django': {		# 使用该日志
+            'handlers': ['console', 'file'],
+            'propagate': True, # 是否让日志信息继续冒泡给其他的日志处理系统
+        },
+    }
 }

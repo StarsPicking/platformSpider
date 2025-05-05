@@ -1,0 +1,8 @@
+{
+    
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/folder_B:${env:PYTHONPATH}"
+    }
+
+       
+}
